@@ -17,11 +17,10 @@ package net.jaspr.base.network;
 import net.minecraft.client.gui.inventory.GuiEditSign;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -34,7 +33,7 @@ public class GuiHandler implements IGuiHandler {
 	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch(ID) {
-		case 0: return new GuiEditSign((TileEntitySign) world.getTileEntity(new BlockPos(x, y, z)));
+		case 0: return new GuiEditSign((TileEntitySign) world.getTileEntity(x, y, z));
 		}
 		return null;
 	}

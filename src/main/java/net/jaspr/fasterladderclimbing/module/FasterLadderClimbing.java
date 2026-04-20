@@ -17,7 +17,7 @@ package net.jaspr.fasterladderclimbing.module;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.jaspr.base.module.Feature;
 
 public class FasterLadderClimbing extends Feature {
@@ -91,15 +91,13 @@ public class FasterLadderClimbing extends Feature {
         }
 
         public void moveUpFarther() {
-            int px = 0;
             float dx = getElevationChangeUpdate();
-            player.moveEntity(px, dx, px);
+            player.moveEntity(0, dx, 0);
         }
-
+ 
         public void moveDownFarther() {
-            int px = 0;
             float dx = getElevationChangeUpdate();
-            player.moveEntity(px, (dx * -1), px);
+            player.moveEntity(0, (dx * -1), 0);
         }
     }
 

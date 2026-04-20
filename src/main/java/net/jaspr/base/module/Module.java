@@ -16,20 +16,20 @@
 package net.jaspr.base.module;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+
 
 public class Module {
 
@@ -74,41 +74,41 @@ public class Module {
 	public void setupConfig() {
 		if(features.isEmpty())
 			addFeatures();
-
-		forEachFeature(feature -> {
+ 
+		for (Feature feature : features.values()) {
 			ConfigHelper.needsRestart = feature.requiresMinecraftRestartToEnable();
 			feature.enabled = loadPropBool(feature.configName, feature.getFeatureDescription(), feature.enabledByDefault) && enabled;
-
+ 
 			feature.setupConstantConfig();
-
+ 
 			if(!feature.forceLoad) {
 				String[] incompatibilities = feature.getIncompatibleMods();
 				if(incompatibilities != null) {
 					List<String> failures = new ArrayList<>();
-
+ 
 					for(String s : incompatibilities)
 						if(Loader.isModLoaded(s)) {
 							feature.enabled = false;
 							failures.add(s);
 						}
-
+ 
 					if(!failures.isEmpty())
 						FMLLog.info("[" + feature.configName + "] is forcefully disabled as it's incompatible with the following loaded mods: " + failures);
 				}
 			}
-
+ 
 			if(!feature.loadtimeDone) {
 				feature.enabledAtLoadtime = feature.enabled;
 				feature.loadtimeDone = true;
 			}
-
+ 
 			if(feature.enabled && !enabledFeatures.contains(feature))
 				enabledFeatures.add(feature);
 			else if(!feature.enabled && enabledFeatures.contains(feature))
 				enabledFeatures.remove(feature);
-
+ 
 			feature.setupConfig();
-
+ 
 			if(!feature.enabled && feature.prevEnabled) {
 				if(feature.hasSubscriptions())
 					MinecraftForge.EVENT_BUS.unregister(feature);
@@ -124,40 +124,54 @@ public class Module {
 				if(feature.hasOreGenSubscriptions())
 					MinecraftForge.ORE_GEN_BUS.register(feature);
 			}
-
+ 
 			feature.prevEnabled = feature.enabled;
-		});
+		}
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
-		forEachEnabled(feature -> feature.preInit(event));
+		for (Feature feature : enabledFeatures) {
+			feature.preInit(event);
+		}
 	}
-
+ 
 	public void init(FMLInitializationEvent event) {
-		forEachEnabled(feature -> feature.init(event));
+		for (Feature feature : enabledFeatures) {
+			feature.init(event);
+		}
 	}
-
+ 
 	public void postInit(FMLPostInitializationEvent event) {
-		forEachEnabled(feature -> feature.postInit(event));
+		for (Feature feature : enabledFeatures) {
+			feature.postInit(event);
+		}
 	}
-
+ 
 	@SideOnly(Side.CLIENT)
 	public void preInitClient(FMLPreInitializationEvent event) {
-		forEachEnabled(feature -> feature.preInitClient(event));
+		for (Feature feature : enabledFeatures) {
+			feature.preInitClient(event);
+		}
 	}
-
+ 
 	@SideOnly(Side.CLIENT)
 	public void initClient(FMLInitializationEvent event) {
-		forEachEnabled(feature -> feature.initClient(event));
+		for (Feature feature : enabledFeatures) {
+			feature.initClient(event);
+		}
 	}
-
+ 
 	@SideOnly(Side.CLIENT)
 	public void postInitClient(FMLPostInitializationEvent event) {
-		forEachEnabled(feature -> feature.postInitClient(event));
+		for (Feature feature : enabledFeatures) {
+			feature.postInitClient(event);
+		}
 	}
-
+ 
 	public void serverStarting(FMLServerStartingEvent event) {
-		forEachEnabled(feature -> feature.serverStarting(event));
+		for (Feature feature : enabledFeatures) {
+			feature.serverStarting(event);
+		}
 	}
 
 	public boolean canBeDisabled() {
@@ -176,12 +190,16 @@ public class Module {
 		return "";
 	}
 
-	public final void forEachFeature(Consumer<Feature> consumer) {
-		features.values().forEach(consumer);
+	public final void forEachFeature(java.util.function.Consumer<Feature> consumer) {
+		for (Feature feature : features.values()) {
+			consumer.accept(feature);
+		}
 	}
-
-	public final void forEachEnabled(Consumer<Feature> consumer) {
-		enabledFeatures.forEach(consumer);
+ 
+	public final void forEachEnabled(java.util.function.Consumer<Feature> consumer) {
+		for (Feature feature : enabledFeatures) {
+			consumer.accept(feature);
+		}
 	}
 
 	public final int loadPropInt(String propName, String desc, int default_) {

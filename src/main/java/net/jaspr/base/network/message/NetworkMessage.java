@@ -17,11 +17,10 @@ package net.jaspr.base.network.message;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
@@ -47,7 +46,6 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 		mapHandler(String.class, NetworkMessage::readString, NetworkMessage::writeString);
 		mapHandler(NBTTagCompound.class, NetworkMessage::readNBT, NetworkMessage::writeNBT);
 		mapHandler(ItemStack.class, NetworkMessage::readItemStack, NetworkMessage::writeItemStack);
-		mapHandler(BlockPos.class, NetworkMessage::readBlockPos, NetworkMessage::writeBlockPos);
 	}
 
 	// The thing you override!
@@ -219,15 +217,7 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 	private static void writeItemStack(ItemStack stack, ByteBuf buf) {
 		ByteBufUtils.writeItemStack(buf, stack);
 	}
-
-	private static BlockPos readBlockPos(ByteBuf buf) {
-		return BlockPos.fromLong(buf.readLong());
-	}
-
-	private static void writeBlockPos(BlockPos pos, ByteBuf buf) {
-		buf.writeLong(pos.toLong());
-	}
-
+ 
 	// Functional interfaces
 	public static interface Writer<T extends Object> {
 		public void write(T t, ByteBuf buf);

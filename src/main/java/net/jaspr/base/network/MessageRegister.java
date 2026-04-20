@@ -14,7 +14,7 @@
  */
 package net.jaspr.base.network;
 
-import net.minecraftforge.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.Side;
 import net.jaspr.base.network.message.MessageChangeConfig;
 
 public class MessageRegister {
